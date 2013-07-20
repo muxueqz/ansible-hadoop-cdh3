@@ -1,0 +1,35 @@
+---
+# The playbook for common tasks
+
+- name: Deploy the Cloudera Repository
+  copy: src=etc/cloudera-CDH3.repo dest=/etc/yum.repos.d/cloudera-CDH3.repo
+
+- name: Remove OpenJDK
+  yum: name={{ item }} state=removed
+  with_items: 
+   - java-1.7.0-openjdk
+   - java-1.6.0-openjdk
+
+- name: Copy Sun JDK package
+  copy: src=dep/jdk-6u31-linux-x64-rpm.bin dest=/dev/shm/jdk-rpm.bin
+
+- name: Install the Sun JDK package
+  shell: creates=/usr/java/default/sun-jdk.installed cd /dev/shm/; echo | sh /dev/shm/jdk-rpm.bin && touch /usr/java/default/sun-jdk.installed
+
+- name: Create the hosts file for all machines
+  template: src=etc/hosts.j2 dest=/etc/hosts
+
+- name: Disable SELinux in conf file
+  lineinfile: dest=/etc/sysconfig/selinux regexp='^SELINUX=' line='SELINUX=disabled' state=present
+
+- name: Disable SELinux dynamically
+  shell: creates=/etc/sysconfig/selinux.disabled setenforce 0 ; touch /etc/sysconfig/selinux.disabled
+
+#- name: Create the iptables file for all machines
+#  template: src=iptables.j2 dest=/etc/sysconfig/iptables
+#  notify: restart iptables
+
+- name: Enable NTP Sync for all machines
+  shell: ntpdate cn.pool.ntp.org ; chkconfig ntpd on
+  notify: restart ntpd
+

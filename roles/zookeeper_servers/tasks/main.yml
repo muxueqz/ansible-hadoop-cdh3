@@ -1,0 +1,13 @@
+---
+# The plays for zookeeper daemons
+
+- name: Install the zookeeper files
+  yum: name=hadoop-zookeeper-server state=installed
+
+- name: Copy the configuration file for zookeeper
+  template: src=zoo.cfg.j2 dest=/etc/zookeeper/zoo.cfg
+  notify: restart zookeeper
+
+- name: initialize the zookeeper
+#  shell: creates=/var/lib/zookeeper/myid service hadoop-zookeeper-server start --myid=${zoo_id}
+  shell: creates=/var/zookeeper/myid echo ${zoo_id} > /var/zookeeper/myid ; chown -R zookeeper /var/zookeeper/

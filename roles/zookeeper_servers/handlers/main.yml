@@ -1,0 +1,5 @@
+---
+# Handler for the zookeeper services
+
+- name: restart zookeeper
+  service: name=hadoop-zookeeper-server state=restarted

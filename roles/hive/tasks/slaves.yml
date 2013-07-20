@@ -1,0 +1,20 @@
+---
+# Playbook for  Hadoop Hive
+
+- name: Install Hive
+  yum: name=${item} state=installed
+  with_items: 
+   - hadoop-hive
+   - hadoop-hive-server
+
+- name: Copy MySQL Java Connector
+  copy: src=dep/mysql-connector-java-5.1.25-bin.jar dest=/usr/lib/hive/lib/mysql-connector-java-5.1.25-bin.jar
+
+- name: Add hive user to hadoop group
+  user: name=hive groups=hadoop append=yes
+
+- name: Copy the hive configuration files
+  template: src=roles/hive/templates/hive_conf/${item}.j2 dest=/etc/hive/conf/${item}
+  with_items: 
+   - hive-site.xml
+  notify: restart hive services

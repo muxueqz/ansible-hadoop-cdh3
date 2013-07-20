@@ -1,0 +1,14 @@
+---
+# Handlers for the hadoop master services
+
+- name: restart hadoop master services
+  service: name=${item} state=restarted
+  with_items: 
+    - hadoop-0.20-jobtracker
+    - hadoop-0.20-namenode
+
+- name: restart hadoopha master services
+  service: name=${item} state=restarted
+  with_items: 
+    - hadoop-0.20-jobtrackerha
+    - hadoop-0.20-namenode

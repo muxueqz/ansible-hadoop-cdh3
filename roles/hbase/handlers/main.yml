@@ -1,0 +1,10 @@
+---
+# Handlers for the Hbase services
+
+- name: restart hbase services
+  service: name=${item} state=restarted
+  with_items: 
+    - hadoop-hbase-master
+    - hadoop-hbase-rest
+    - hadoop-hbase-regionserver
+    - hadoop-hbase-thrift

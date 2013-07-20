@@ -1,0 +1,31 @@
+---
+# Playbook for  Hadoop slave servers
+
+- name: Install Hbase
+  yum: name=${item} state=installed
+  with_items: 
+   - hadoop-hbase-master
+   - hadoop-hbase-rest
+   - hadoop-hbase-regionserver
+   - hadoop-hbase-thrift
+
+- name: Copy the hbase configuration files
+  template: src=roles/hbase/templates/hbase_conf/${item}.j2 dest=/etc/hbase/conf/${item}
+  with_items: 
+   - hbase-site.xml
+   - regionservers
+   - hbase-env.sh
+  when: not ha_enabled
+  notify: restart hbase services
+
+- name: Add hbase user to hadoop group
+  user: name=hbase groups=hadoop append=yes
+
+- name: start hbase services
+  service: name={{ item }} state=started
+  with_items:
+    - hadoop-hbase-master
+    - hadoop-hbase-rest
+    - hadoop-hbase-regionserver
+    - hadoop-hbase-thrift
+  

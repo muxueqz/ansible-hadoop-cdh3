@@ -1,0 +1,7 @@
+---
+# Handlers for the Hive services
+
+- name: restart hive services
+  service: name=${item} state=restarted
+  with_items: 
+    - hadoop-hive-server

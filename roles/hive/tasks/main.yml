@@ -1,0 +1,4 @@
+---
+# Playbook for  Hadoop Hive
+
+- include: slaves.yml tags=hive
